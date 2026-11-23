@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-clean-200 selection:text-clean-900;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-clean-600 focus:ring-offset-2;
+}
