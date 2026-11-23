@@ -4,6 +4,16 @@ This document outlines the complete verified end-to-end journey of **GharKaGod**
 
 ---
 
+## 🌐 Live Production Deployment
+
+- **Production Cloud Run URL:** [https://gharkagod-1054042324015.us-central1.run.app](https://gharkagod-1054042324015.us-central1.run.app)
+- **GitHub Repository:** [https://github.com/anushkay91/AQIHome](https://github.com/anushkay91/AQIHome)
+- **Interactive Swagger Documentation:** [https://gharkagod-1054042324015.us-central1.run.app/docs](https://gharkagod-1054042324015.us-central1.run.app/docs)
+- **Health Verification:** [https://gharkagod-1054042324015.us-central1.run.app/health](https://gharkagod-1054042324015.us-central1.run.app/health)
+- **Google Cloud Platform Project:** `smartcity-515403` (Project Number: `1054042324015`, Region: `us-central1`)
+
+---
+
 ## 1. Starting the Application
 
 ### Terminal 1: Backend API

@@ -7,6 +7,17 @@
 [![Frontend Build](https://img.shields.io/badge/Vite%20Bundle-365%20KB%20(106%20KB%20gzip)-blue)](frontend)
 [![Accessibility](https://img.shields.io/badge/WCAG%202.2-AA%20Compliant-purple)](docs/ACCESSIBILITY_AUDIT.md)
 [![Zero Fake Sensors](https://img.shields.io/badge/Scientific%20Honesty-Strict%20Zero%20Sensor%20Policy-orange)](docs/CHALLENGE_ALIGNMENT.md)
+[![Live Demo](https://img.shields.io/badge/Cloud%20Run-Live%20Production-success)](https://gharkagod-1054042324015.us-central1.run.app)
+
+---
+
+## 🚀 Live Production & Repository Links
+
+- **Live Cloud Run Deployment:** [https://gharkagod-1054042324015.us-central1.run.app](https://gharkagod-1054042324015.us-central1.run.app)
+- **GitHub Repository:** [https://github.com/anushkay91/AQIHome](https://github.com/anushkay91/AQIHome)
+- **GCP Project:** `smartcity-515403` (Project Number: `1054042324015`)
+- **API Documentation (Swagger):** [https://gharkagod-1054042324015.us-central1.run.app/docs](https://gharkagod-1054042324015.us-central1.run.app/docs)
+- **Healthcheck:** [https://gharkagod-1054042324015.us-central1.run.app/health](https://gharkagod-1054042324015.us-central1.run.app/health)
 
 ---
 
