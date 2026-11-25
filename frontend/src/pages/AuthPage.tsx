@@ -49,7 +49,7 @@ export const AuthPage: React.FC = () => {
     try {
       await startGuestMode();
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       setError('Could not start demo session. Please try again.');
     } finally {
       setLoading(false);

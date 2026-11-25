@@ -1,20 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/* oxlint-disable react/only-export-components */
+import React, { useState, useEffect } from 'react';
 import type { User, Household } from '../types';
 import { api } from '../api';
+import { AuthContext, useAuth } from './authContextDef';
 
-interface AuthContextType {
-  user: User | null;
-  household: Household | null;
-  isGuestDemo: boolean;
-  isLoading: boolean;
-  login: (token: string, user: User) => Promise<void>;
-  logout: () => void;
-  setHousehold: (h: Household | null) => void;
-  startGuestMode: () => Promise<void>;
-  refreshHousehold: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export type { AuthContextType } from './authContextDef';
+export { useAuth };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -23,6 +14,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('gharkagod_is_guest') === 'true';
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const logout = () => {
+    localStorage.removeItem('gharkagod_token');
+    localStorage.removeItem('gharkagod_is_guest');
+    setUser(null);
+    setHousehold(null);
+    setIsGuestDemo(false);
+  };
 
   const refreshHousehold = async () => {
     try {
@@ -63,14 +62,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await refreshHousehold();
   };
 
-  const logout = () => {
-    localStorage.removeItem('gharkagod_token');
-    localStorage.removeItem('gharkagod_is_guest');
-    setUser(null);
-    setHousehold(null);
-    setIsGuestDemo(false);
-  };
-
   const startGuestMode = async () => {
     setIsLoading(true);
     try {
@@ -104,12 +95,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

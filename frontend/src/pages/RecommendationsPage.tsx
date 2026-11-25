@@ -21,22 +21,33 @@ export const RecommendationsPage: React.FC = () => {
   const [aiResponse, setAiResponse] = useState<ExplainResponse | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  const loadData = async () => {
-    if (!household) return;
-    try {
-      const [recs, tracked] = await Promise.all([
-        api.getRecommendations(household.id),
-        api.getTrackedActions(household.id)
-      ]);
-      setRecommendations(recs);
-      setTrackedActions(tracked);
-    } catch (err) {
-      console.error('Failed to load recommendations', err);
-    }
-  };
-
   useEffect(() => {
+    const householdId = household?.id;
+    if (!householdId) return;
+    let isMounted = true;
+
+    const loadData = async () => {
+      try {
+        const [recs, tracked] = await Promise.all([
+          api.getRecommendations(householdId),
+          api.getTrackedActions(householdId)
+        ]);
+        if (isMounted) {
+          setRecommendations(recs);
+          setTrackedActions(tracked);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Failed to load recommendations', err);
+        }
+      }
+    };
+
     loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [household?.id]);
 
   const handleOpenAiExplainer = async (rec: Recommendation) => {

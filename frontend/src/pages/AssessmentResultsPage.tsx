@@ -12,21 +12,31 @@ import { ScientificDisclaimer } from '../components/ScientificDisclaimer';
 export const AssessmentResultsPage: React.FC = () => {
   const { household } = useAuth();
   const [assessment, setAssessment] = useState<AssessmentResult | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    const householdId = household?.id;
+    if (!householdId) {
+      return;
+    }
+    let isMounted = true;
+
     const fetchLatest = async () => {
-      if (!household) return;
       try {
-        const res = await api.getLatestAssessment(household.id);
-        setAssessment(res);
+        const res = await api.getLatestAssessment(householdId);
+        if (isMounted) setAssessment(res);
       } catch (err) {
-        console.error('Failed to load assessment', err);
+        if (isMounted) console.error('Failed to load assessment', err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
+
     fetchLatest();
+
+    return () => {
+      isMounted = false;
+    };
   }, [household?.id]);
 
   if (loading) {

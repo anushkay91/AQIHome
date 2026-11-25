@@ -56,6 +56,15 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
     return response
 
+# Global unhandled exception handler for predictable, secure error responses
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.error("Unhandled error processing %s %s: %s", request.method, request.url.path, exc, exc_info=True)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "An unexpected error occurred. Please try again later."}
+    )
+
 # Mount routers
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX)
 app.include_router(households.router, prefix=settings.API_V1_PREFIX)

@@ -17,27 +17,39 @@ export const DashboardPage: React.FC = () => {
   const [trackerSummary, setTrackerSummary] = useState<TrackerSummary | null>(null);
   const [refreshingAqi, setRefreshingAqi] = useState<boolean>(false);
 
-  const loadDashboardData = async () => {
-    if (!household) return;
-    try {
-      const aqiPromise = api.getOutdoorAqi(household.city);
-      const assessPromise = api.getLatestAssessment(household.id).catch(() => null);
-      const trackerPromise = api.getTrackerSummary(household.id).catch(() => null);
-
-      const [aqiRes, assessRes, trackerRes] = await Promise.all([
-        aqiPromise, assessPromise, trackerPromise
-      ]);
-
-      setOutdoorAqi(aqiRes);
-      setLatestAssessment(assessRes);
-      setTrackerSummary(trackerRes);
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
-    }
-  };
-
   useEffect(() => {
-    loadDashboardData();
+    const householdId = household?.id;
+    const householdCity = household?.city;
+    if (!householdId || !householdCity) return;
+    let isMounted = true;
+
+    const loadData = async () => {
+      try {
+        const aqiPromise = api.getOutdoorAqi(householdCity);
+        const assessPromise = api.getLatestAssessment(householdId).catch(() => null);
+        const trackerPromise = api.getTrackerSummary(householdId).catch(() => null);
+
+        const [aqiRes, assessRes, trackerRes] = await Promise.all([
+          aqiPromise, assessPromise, trackerPromise
+        ]);
+
+        if (isMounted) {
+          setOutdoorAqi(aqiRes);
+          setLatestAssessment(assessRes);
+          setTrackerSummary(trackerRes);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Error loading dashboard data:', err);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [household?.id, household?.city]);
 
   const handleRefreshAqi = async () => {

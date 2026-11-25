@@ -16,22 +16,33 @@ export const ImpactTrackerPage: React.FC = () => {
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
   const [notesText, setNotesText] = useState<string>('');
 
-  const loadTrackerData = async () => {
-    if (!household) return;
-    try {
-      const [sumRes, actRes] = await Promise.all([
-        api.getTrackerSummary(household.id),
-        api.getTrackedActions(household.id)
-      ]);
-      setSummary(sumRes);
-      setActions(actRes);
-    } catch (err) {
-      console.error('Failed to load impact tracker data', err);
-    }
-  };
-
   useEffect(() => {
-    loadTrackerData();
+    const householdId = household?.id;
+    if (!householdId) return;
+    let isMounted = true;
+
+    const loadData = async () => {
+      try {
+        const [sumRes, actRes] = await Promise.all([
+          api.getTrackerSummary(householdId),
+          api.getTrackedActions(householdId)
+        ]);
+        if (isMounted) {
+          setSummary(sumRes);
+          setActions(actRes);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Failed to load impact tracker data', err);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [household?.id]);
 
   const handleUpdateStatus = async (action: TrackedAction, newStatus: 'planned' | 'started' | 'completed' | 'skipped') => {

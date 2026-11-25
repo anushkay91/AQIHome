@@ -1,9 +1,12 @@
 import time
+import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional, Tuple
 import httpx
 from backend.app.config import settings
 from backend.app.schemas import OutdoorAqiContext
+
+logger = logging.getLogger("gharkagod.environmental")
 
 # Well-known coordinates for prominent Indian urban hubs affected by winter smog
 KNOWN_CITIES: Dict[str, Tuple[float, float, str]] = {
@@ -176,8 +179,11 @@ async def fetch_outdoor_aqi(city: str, lat: Optional[float] = None, lon: Optiona
                 )
                 _aqi_cache[city_normalized] = (now_ts, ctx)
                 return ctx
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning(
+            "Open-Meteo external AQI retrieval failed for city '%s' (%s: %s). Activating verified seasonal baseline fallback.",
+            city, type(exc).__name__, exc
+        )
 
     # 4. Graceful Fallback if API fails or network unavailable
     # Realistic seasonal winter smog baseline with explicit non-live flag

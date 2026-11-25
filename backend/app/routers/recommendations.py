@@ -41,11 +41,17 @@ async def explain_recommendation(
     household: Household = Depends(verify_household_owner),
     db: Session = Depends(get_db)
 ):
-    rec = db.query(Recommendation).filter(Recommendation.id == rec_id).first()
+    # Enforce strict object-level authorization: recommendation must belong to this household's assessment
+    rec = (
+        db.query(Recommendation)
+        .join(Assessment, Recommendation.assessment_id == Assessment.id)
+        .filter(Recommendation.id == rec_id, Assessment.household_id == household.id)
+        .first()
+    )
     if not rec:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Recommendation with ID '{rec_id}' not found."
+            detail=f"Recommendation with ID '{rec_id}' not found for this household."
         )
 
     household_context = {
